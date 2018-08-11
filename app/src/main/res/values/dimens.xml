@@ -4,7 +4,7 @@
     <dimen name="detail_body_text_size">22sp</dimen>
     <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
 
-    <dimen name="fab_elevation">2dp</dimen>
+    <dimen name="fab_elevation">4dp</dimen>
     <dimen name="fab_press_translation_z">6dp</dimen>
     <dimen name="fab_margin">24dp</dimen>
     <dimen name="app_bar_height">200dp</dimen>
@@ -18,6 +18,11 @@
     <dimen name="card_subtitle_bottom_padding">8dp</dimen>
     <dimen name="list_horizontal_margin">8dp</dimen>
     <dimen name="list_vertical_margin">8dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="material_component_cards_left_and_right_padding">16dp</dimen>
+    <dimen name="material_component_cards_top_and_bottom_padding">16dp</dimen>
+    <dimen name="material_component_cards_padding_from_edge_of_screen_to_card">4dp</dimen>
+    <dimen name="material_component_cards_space_between_cards">4dp</dimen>
 
 
 </resources>

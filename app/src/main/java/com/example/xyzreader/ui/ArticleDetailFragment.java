@@ -26,9 +26,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.borjabravo.readmoretextview.ReadMoreTextView;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
@@ -59,6 +62,7 @@ public class ArticleDetailFragment extends Fragment implements
     private ImageView mPhotoView;
     private CollapsingToolbarLayout mToolbarLayout;
     private Toolbar mToolbar;
+    private FrameLayout mLoader;
 
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
@@ -116,6 +120,7 @@ public class ArticleDetailFragment extends Fragment implements
         mPhotoView = mRootView.findViewById(R.id.photo);
 
         mToolbar = mRootView.findViewById(R.id.toolbar);
+        mLoader = mRootView.findViewById(R.id.fl_loader);
 
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +131,7 @@ public class ArticleDetailFragment extends Fragment implements
                         .getIntent(), getString(R.string.action_share)));
             }
         });
-
+        mRootView.findViewById(R.id.share_fab).setVisibility(View.GONE);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,12 +159,14 @@ public class ArticleDetailFragment extends Fragment implements
         if (mRootView == null) {
             return;
         }
-
-        TextView titleView = mRootView.findViewById(R.id.article_title);
+         TextView titleView = mRootView.findViewById(R.id.article_title);
         TextView bylineView = mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
         TextView bodyView = mRootView.findViewById(R.id.article_body);
         mToolbarLayout = mRootView.findViewById(R.id.toolbar_layout);
+
+            mLoader.setVisibility(View.GONE);
+        mRootView.findViewById(R.id.share_fab).setVisibility(View.VISIBLE);
 
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
@@ -177,7 +184,7 @@ public class ArticleDetailFragment extends Fragment implements
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
                             Bitmap bitmap = ((BitmapDrawable) resource.getCurrent()).getBitmap();
-                            changeToolbarColors(bitmap);
+                      //     changeToolbarColors(bitmap);
                             return false;
                         }
                     })
@@ -203,7 +210,9 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
-            bodyView.setText(mCursor.getString(ArticleLoader.Query.BODY));
+            final String body = Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)).toString();
+            bodyView.setText(body);
+            bodyView.setSelected(true);
         } else {
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
@@ -232,7 +241,8 @@ public class ArticleDetailFragment extends Fragment implements
             mCursor.close();
             mCursor = null;
         }
-
+        if(mCursor==null)
+            return;
         bindViews();
     }
 
@@ -245,6 +255,8 @@ public class ArticleDetailFragment extends Fragment implements
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(@NonNull Palette palette) {
+                if(!isAdded())
+                    return;
                 int defaultColor = getResources().getColor(R.color.theme_primary_dark);
                 int plattedColor = palette.getDarkMutedColor(defaultColor);
                 if (mToolbarLayout != null) {
